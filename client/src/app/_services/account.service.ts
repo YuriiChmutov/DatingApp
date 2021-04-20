@@ -9,7 +9,7 @@ import { User } from '../_models/user';
 })
 export class AccountService {
   baseUrl = 'https://localhost:5001/api/';
-  private currentUserSource = new ReplaySubject(1);
+  private currentUserSource = new ReplaySubject<User>(1);
   currentUser$ = this.currentUserSource.asObservable();
 
   constructor(private http: HttpClient) { }
@@ -28,10 +28,10 @@ export class AccountService {
 
   register(model: any) {
     return this.http.post(this.baseUrl + 'account/register', model).pipe(
-      map(user => {
+      map((user) => {
         if (user) {
           localStorage.setItem('user', JSON.stringify(user));
-          this.currentUserSource.next(user);
+          this.currentUserSource.next(user as any);
         }
       })
     );
@@ -43,6 +43,6 @@ export class AccountService {
 
   logout() {
     localStorage.removeItem('user');
-    this.currentUserSource.next(null);
+    this.currentUserSource.next(null as any);
   }
 }
